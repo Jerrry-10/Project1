@@ -16,6 +16,7 @@ const Conversions = () => {
   const [amount, setAmount] = useState(0);
   const [rates, setRates] = useState([]);
   const [btcValue, setBtcValue] = useState(0);
+  const [sortOrder, setSortOrder] = useState("asc");
 
   useEffect(() => {
     axios
@@ -39,20 +40,14 @@ const Conversions = () => {
     setBtcValue(value);
   };
 
-  const handleSortAscending = () => {
-    const sortedRates = Object.entries(rates).sort(
-      (a, b) =>
-        a[1].rate_float / rates[currency].rate_float -
-        b[1].rate_float / rates[currency].rate_float
-    );
-    setRates(Object.fromEntries(sortedRates));
-  };
-
-  const handleSortDescending = () => {
-    const sortedRates = Object.entries(rates).sort(
-      (a, b) =>
-        b[1].rate_float / rates[currency].rate_float -
-        a[1].rate_float / rates[currency].rate_float
+  const handleSortToggle = () => {
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    const sortedRates = Object.entries(rates).sort((a, b) =>
+      sortOrder === "asc"
+        ? a[1].rate_float / rates[currency].rate_float -
+          b[1].rate_float / rates[currency].rate_float
+        : b[1].rate_float / rates[currency].rate_float -
+          a[1].rate_float / rates[currency].rate_float
     );
     setRates(Object.fromEntries(sortedRates));
   };
@@ -68,14 +63,9 @@ const Conversions = () => {
       }}
     >
       <Typography variant="h5">Conversions</Typography>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <Button variant="contained" onClick={handleSortAscending}>
-          Sort Ascending
-        </Button>
-        <Button variant="contained" onClick={handleSortDescending}>
-          Sort Descending
-        </Button>
-      </Box>
+      <Button variant="contained" onClick={handleSortToggle}>
+        {sortOrder === "asc" ? "Sort Ascending" : "Sort Descending"}
+      </Button>
       <Box
         sx={{
           display: "flex",
